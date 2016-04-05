@@ -214,7 +214,7 @@ void getStrFromErrorCode(uint32_t nError )
 }
 
 #define FILE  FIL
-
+#if 0
 FILE* fopen(const char* __filename, const char* __modes)
 {
     FILE* ret = NULL;
@@ -230,6 +230,7 @@ int fclose(FILE* file)
 {
     f_close(file);
 }
+#endif
 
 void molup_test()
 {

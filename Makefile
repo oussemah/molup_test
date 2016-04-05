@@ -2,30 +2,42 @@
 TARGET=template
 
 #define TOOLCHAIN
-CC=arm-none-eabi-gcc
-LD=arm-none-eabi-ld
-AR=arm-none-eabi-ar
-OBJCOPY=arm-none-eabi-objcopy
+#CC_BASE_PATH=/home/harbio/sdk2/gcc-arm-none-eabi-5_3-2016q1
+ifeq (,$(CC_BASE_PATH))
+CC_BASE_PATH=/usr
+endif
+CC=$(CC_BASE_PATH)/bin/arm-none-eabi-gcc
+AR=$(CC_BASE_PATH)/bin/arm-none-eabi-ar
+LD=$(CC_BASE_PATH)/bin/arm-none-eabi-ld
+OBJCOPY=$(CC_BASE_PATH)/bin/arm-none-eabi-objcopy
 
-DEBUGGER=arm-none-eabi-gdb
+
+DEBUGGER=$(CC_BASE_PATH)/bin/arm-none-eabi-gdb
+ifeq (,$(STLINK))
 STLINK=/opt/STM/stlink
-
+endif
 
 #define Toolchain and Library paths
-LIB_PATH   ?=/usr/lib/arm-none-eabi/newlib/armv7e-m
+ifeq (,$(CUBE_FW_BASE))
+CUBE_FW_BASE=/usr/local/workspace/stm32/fw_repo/STM32Cube_FW_F4_V1.11.0
+endif
+ifeq (,$(CC_VERSION))
+CC_VERSION=`ls $(CC_BASE_PATH)/lib/gcc/arm-none-eabi`
+endif
+LIB_PATH   ?=$(CC_BASE_PATH)/lib/gcc/arm-none-eabi/$(CC_VERSION)
 
-HAL_PATH   ?=/usr/local/workspace/stm32/fw_repo/STM32Cube_FW_F4_V1.11.0/Drivers/STM32F4xx_HAL_Driver
-CMSIS_PATH ?=/usr/local/workspace/stm32/fw_repo/STM32Cube_FW_F4_V1.11.0/Drivers/CMSIS
-BSP_PATH   ?=/usr/local/workspace/stm32/fw_repo/STM32Cube_FW_F4_V1.11.0/Drivers/BSP
+HAL_PATH   ?=$(CUBE_FW_BASE)/Drivers/STM32F4xx_HAL_Driver
+CMSIS_PATH ?=$(CUBE_FW_BASE)/Drivers/CMSIS
+BSP_PATH   ?=$(CUBE_FW_BASE)/Drivers/BSP
 
-FATFS_PATH ?=/usr/local/workspace/stm32/fw_repo/STM32Cube_FW_F4_V1.11.0/Middlewares/Third_Party/fatfs_custom
+FATFS_PATH ?=$(CUBE_FW_BASE)/Middlewares/Third_Party/fatafs_stm32f4
 
 #define INCLUDES
 BASE_INCLUDES= -I$(LIB_PATH)/include-fixed
 
 HAL_INCLUDES= -I$(HAL_PATH)/Inc -I$(CMSIS_PATH)/Include -I$(CMSIS_PATH)/Device/ST/STM32F4xx/Include
 
-CUSTOM_INCLUDES= -IInc -I$(BSP_PATH)/STM32F4-Discovery -I$(FATFS_PATH) -I$(FATFS_PATH)/drivers
+CUSTOM_INCLUDES = -IInc -I$(BSP_PATH)/STM32F4-Discovery -I$(FATFS_PATH) -I$(FATFS_PATH)/drivers
 
 CUSTOM_INCLUDES += -Iexternal_libs/molup
 
@@ -42,7 +54,7 @@ CFLAGS += $(CUSTOM_INCLUDES) $(HAL_INCLUDES) $(BASE_INCLUDES)
 
 CFLAGS += -DSTM32F4_DISCOVERY -DSTM32F407xx -DUSE_HAL_DRIVER
 
-LDFLAGS = -L /usr/lib/gcc/arm-none-eabi/4.9.3/armv7e-m -lgcc -L $(LIB_PATH) -lc -TSTM32F407VGTx_FLASH.ld -Map $(TARGET).map -nostartfiles
+LDFLAGS = -L $(CC_BASE_PATH)/lib/gcc/arm-none-eabi/$(CC_VERSION)/armv7e-m -lgcc -L $(CC_BASE_PATH)/arm-none-eabi/lib/thumb -lc -TSTM32F407VGTx_FLASH.ld -Map $(TARGET).map -nostartfiles
 
 #define SRC FILES
 SRCS  = startup_stm32f407xx.s
