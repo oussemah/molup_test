@@ -206,7 +206,7 @@ void assert_failed(uint8_t* file, uint32_t line)
 #endif
 
 #define MAXMODULE 50
-#define MODEL_FILE_NAME "test_file.txt"
+char MODEL_FILE_NAME[8]= "PLS.AMO";
 
 void getStrFromErrorCode(uint32_t nError )
 {
@@ -271,7 +271,7 @@ void molup_test()
 	char sSharedObj[50]		= "";
 
     /* Check if model file exists */
-	pModelFile = m_fopen(MODEL_FILE_NAME,"r");
+	pModelFile = m_fopen("PLS.AMO","r");
 	if(pModelFile == NULL)
 	{
 		printf("\nError: Model file(AMO) not found\r\n");

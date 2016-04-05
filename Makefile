@@ -30,7 +30,7 @@ HAL_PATH   ?=$(CUBE_FW_BASE)/Drivers/STM32F4xx_HAL_Driver
 CMSIS_PATH ?=$(CUBE_FW_BASE)/Drivers/CMSIS
 BSP_PATH   ?=$(CUBE_FW_BASE)/Drivers/BSP
 
-FATFS_PATH ?=$(CUBE_FW_BASE)/Middlewares/Third_Party/fatafs_stm32f4
+FATFS_PATH ?=$(CUBE_FW_BASE)/Middlewares/Third_Party/fatfs_stm32f4
 
 #define INCLUDES
 #BASE_INCLUDES= -I$(LIB_PATH)/include-fixed
@@ -107,4 +107,4 @@ burn:$(TARGET).bin
 
 debug:$(TARGET).bin
 	$(STLINK)/st-util -p 5000 & echo $! > /tmp/stmgdbserver.pid
-	$(DEBUGGER) $(TARGET).elf -ex "target remote :5000" -ex "b main" -ex "set print pretty on" -ex "continue"
+	$(DEBUGGER) $(TARGET).elf -ex "target remote :5000" -ex "b main" -ex "b YJZCcrNdP" -ex "set print pretty on" -ex "layout split" -ex "tui reg general" -ex "continue"
