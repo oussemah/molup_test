@@ -1,0 +1,1 @@
+moluptest.exe PLS.AMO input.txt output.txt 25

@@ -1,0 +1,21 @@
+Goal:
+-----
+
+ > Use the molup library
+ Problem -> molup libary uses fopen function
+         -> fopen function is normally provided by newlib
+         -> for our custom case, we need to use the fafts f_open functions
+         -> The solution is to make a fopen function, compatible with the newlib call,
+            and which is implemented using the fatfs routines
+
+ > Question:
+ -----------
+ 
+ 1-> do I need, at any time, to remove the dependancy with newlib ?
+   > What code is using newlib ? (fatfs? stm32?)
+
+ 2-> Is it possible to just define a new fopen function while keeping the existing
+     dependancy on newlib ?
+    >> NO
+ 
+ 3-> 
