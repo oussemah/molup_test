@@ -33,7 +33,7 @@ BSP_PATH   ?=$(CUBE_FW_BASE)/Drivers/BSP
 FATFS_PATH ?=$(CUBE_FW_BASE)/Middlewares/Third_Party/fatafs_stm32f4
 
 #define INCLUDES
-BASE_INCLUDES= -I$(LIB_PATH)/include-fixed
+#BASE_INCLUDES= -I$(LIB_PATH)/include-fixed
 
 HAL_INCLUDES= -I$(HAL_PATH)/Inc -I$(CMSIS_PATH)/Include -I$(CMSIS_PATH)/Device/ST/STM32F4xx/Include
 
@@ -80,13 +80,14 @@ SRCS += $(FATFS_PATH)/drivers/fatfs_sd_sdio.c
 SRCS += $(FATFS_PATH)/option/syscall.c
 SRCS += $(FATFS_PATH)/option/ccsbcs.c
 
+SRCS += Src/file_handler.c
 SRCS += Src/main.c
 
 OBJS  = ccsbcs.o main.o stm32f4xx_hal_dma.o stm32f4xx_hal_rcc.o stm32f4xx_ll_sdmmc.o
 OBJS += diskio.o startup_stm32f407xx.o stm32f4xx_hal_gpio.o stm32f4xx_hal_sd.o stm32f4xx_newlib_stubs.o
 OBJS += fatfs_sd_sdio.o stm32f4_discovery.o stm32f4xx_hal_msp.o stm32f4xx_hal_uart.o syscall.o
 OBJS += ff.o stm32f4xx_hal_cortex.o stm32f4xx_hal.o stm32f4xx_it.o system_stm32f4xx.o
-OBJS += external_libs/molup/static_molup.o
+OBJS += external_libs/molup/static_molup.o file_handler.o
 
 #define build targets
 $(TARGET).elf:

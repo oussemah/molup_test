@@ -29,6 +29,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"    
 
+#include "file_handler.h"
+
 #include "molup.h"
 #include "molupcodes.h"
 
@@ -97,7 +99,7 @@ int main(void)
     if (f_mount(&FS, "", 1) == FR_OK) {
         molup_test();
         /* Try to open file */
-        if ((fres = f_open(&fil, "test_file.txt", FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_WRITE)) == FR_OK) {
+        if ((fres = f_open(&fil, "test_file1.txt", FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_WRITE)) == FR_OK) {
             var = 137520;
             /* Format string */
             sprintf(buffer, "Var value = : %u \n", var);
@@ -182,7 +184,7 @@ static void Error_Handler(void)
 {
   /* Turn LED5 on */
   BSP_LED_On(LED5);
-  while(1)
+  while(0)
   {
   }
 }
@@ -204,33 +206,13 @@ void assert_failed(uint8_t* file, uint32_t line)
 #endif
 
 #define MAXMODULE 50
-#define MODEL_FILE_NAME "PLS.AMO"
+#define MODEL_FILE_NAME "test_file.txt"
 
 void getStrFromErrorCode(uint32_t nError )
 {
-    sprintf(buffer, "Error:%u\n\r", nError);
-    HAL_UART_Transmit(&UartHandle, (uint8_t*) buffer, 10, 100);
+    printf("Error:%u\n\r", nError);
     return;
 }
-
-#define FILE  FIL
-#if 0
-FILE* fopen(const char* __filename, const char* __modes)
-{
-    FILE* ret = NULL;
-    FRESULT fres;
-    
-    if ((fres = f_open(ret, __filename, FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_WRITE)) != FR_OK) { 
-        return NULL;
-    }
-    return ret;
-}
-
-int fclose(FILE* file)
-{
-    f_close(file);
-}
-#endif
 
 void molup_test()
 {
@@ -242,7 +224,7 @@ void molup_test()
 	
 	FILE *pResultFile    = NULL;		/* File pointer for to store Result Data */
 	FILE *pInDataFile    = NULL;     /* File pointer for input Data */
-	FILE *pModelFile     = NULL;     /* File pointer for Model (*.AMO) */
+	FIL *pModelFile = NULL;     /* File pointer for Model (*.AMO) */
 
 	TOptions *hOptions   = NULL;
 	TFilter* pTFilter    = NULL;
@@ -289,14 +271,14 @@ void molup_test()
 	char sSharedObj[50]		= "";
 
     /* Check if model file exists */
-	pModelFile = fopen(MODEL_FILE_NAME,"r");
+	pModelFile = m_fopen(MODEL_FILE_NAME,"r");
 	if(pModelFile == NULL)
 	{
-		printf("\nError: Model file(AMO) not found\n");
-		//Error_Handler();
+		printf("\nError: Model file(AMO) not found\r\n");
+		Error_Handler();
 	}
 	else
-		fclose( pModelFile );
+		m_fclose( pModelFile );
 
     objHandle = (myUINT32)molpOpenPredictor();	/* Open predictor - Returns a handle */
 

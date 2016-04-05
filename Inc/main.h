@@ -37,8 +37,6 @@
 #include "stm32f4xx_hal_gpio.h"
 
 /* FatFs includes component */
-#include "defines.h"
-#include "attributes.h"
 #include "ff.h"
 #include "diskio.h"
 #include "string.h"
