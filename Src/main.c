@@ -63,6 +63,7 @@ int main(void)
 {
   uint8_t splash_text[]="Starting LibMolup test on STM32\n\r";
   uint8_t rtext[100];
+  uint8_t buff[7];
   unsigned int bytesread = 0;
   unsigned int var = 0;
 
@@ -95,12 +96,16 @@ int main(void)
   /* Put on Orange LED to signal app start */
   BSP_LED_On(LED3);
 
+  //sscanf("145 ff", "%d %s", &var, rtext);
+  //printf("var = %u\r\nrtext = %s\r\n", var, rtext);
   /* Try to mount card */
     if (f_mount(&FS, "", 1) == FR_OK) {
-        molup_test();
+        //molup_test();
+        printf ("Mounted OK\r\n");
         /* Try to open file */
-        if ((fres = f_open(&fil, "test_file1.txt", FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_WRITE)) == FR_OK) {
-            var = 137520;
+        if ((fres = f_open(&fil, "test.txt", FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_WRITE)) == FR_OK) {
+            printf("Open OK\r\n");
+            var = 13520;
             /* Format string */
             sprintf(buffer, "Var value = : %u \n", var);
             
@@ -111,27 +116,41 @@ int main(void)
             f_close(&fil);
             
             /* read file contents */
-            if ((fres = f_open(&fil, "test_file.txt", FA_READ)) == FR_OK) {
+            if ((fres = f_open(&fil, "test_file1.txt", FA_READ)) == FR_OK) {
+                printf("Open OK\r\n");
                 /* Read data from the text file */
+                var = 0;
+#if 0
                 fres = f_read(&fil, rtext, sizeof(rtext), (void *)&bytesread);
-          
                 if((bytesread == 0) || (fres != FR_OK))
                 {
                     /* file Read or EOF Error */
-                    BSP_LED_On(LED5);
+                    Error_Handler();
                 } else {
+                    sscanf(rtext, "Var %s = : %u", buff, &var);
+                    printf("Read  %s : %d\r\n", buff, var);
                     HAL_UART_Transmit(&UartHandle, (uint8_t *) rtext, bytesread, 500);
                 }
+#else
+                fscanf(&fil, "Var %s = : %u", buff, &var);
+                printf("Read  %s : %d\r\n", buff, var);
+#endif
                 f_close(&fil);
+            } else {
+              printf("Unable to open file for reading\r\n");
+              Error_Handler();
             }
             /* Turn led ON */
             BSP_LED_On(LED4);
         } else {
-            BSP_LED_On(LED5);
+            printf("Unable to open file for writing\r\n");
+            Error_Handler();
         }
         BSP_LED_Off(LED3);
         /* Unmount SDCARD */
         f_mount(NULL, "", 1);
+    } else {
+      printf("Unable to mount fatfs\r\n");
     }
 
   while (1)
@@ -184,7 +203,8 @@ static void Error_Handler(void)
 {
   /* Turn LED5 on */
   BSP_LED_On(LED5);
-  while(0)
+  f_mount(NULL, "", 1);
+  while(1)
   {
   }
 }
@@ -207,6 +227,7 @@ void assert_failed(uint8_t* file, uint32_t line)
 
 #define MAXMODULE 50
 char MODEL_FILE_NAME[8]= "PLS.AMO";
+//char MODEL_FILE_NAME[]= "test_file.txt";
 
 void getStrFromErrorCode(uint32_t nError )
 {
@@ -271,7 +292,7 @@ void molup_test()
 	char sSharedObj[50]		= "";
 
     /* Check if model file exists */
-	pModelFile = m_fopen("PLS.AMO","r");
+	pModelFile = m_fopen(MODEL_FILE_NAME,"r");
 	if(pModelFile == NULL)
 	{
 		printf("\nError: Model file(AMO) not found\r\n");
