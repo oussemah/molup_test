@@ -96,14 +96,12 @@ int main(void)
   /* Put on Orange LED to signal app start */
   BSP_LED_On(LED3);
 
-  //sscanf("145 ff", "%d %s", &var, rtext);
-  //printf("var = %u\r\nrtext = %s\r\n", var, rtext);
   /* Try to mount card */
     if (f_mount(&FS, "", 1) == FR_OK) {
-        //molup_test();
+        molup_test();
         printf ("Mounted OK\r\n");
         /* Try to open file */
-        if ((fres = f_open(&fil, "test.txt", FA_CREATE_ALWAYS | FA_OPEN_ALWAYS | FA_WRITE)) == FR_OK) {
+        if ((fres = f_open(&fil, "tests_file1.txt", FA_OPEN_ALWAYS | FA_WRITE)) == FR_OK) {
             printf("Open OK\r\n");
             var = 13520;
             /* Format string */
@@ -116,7 +114,7 @@ int main(void)
             f_close(&fil);
             
             /* read file contents */
-            if ((fres = f_open(&fil, "test_file1.txt", FA_READ)) == FR_OK) {
+            if ((fres = f_open(&fil, "tests_file.txt", FA_READ)) == FR_OK) {
                 printf("Open OK\r\n");
                 /* Read data from the text file */
                 var = 0;
@@ -132,7 +130,7 @@ int main(void)
                     HAL_UART_Transmit(&UartHandle, (uint8_t *) rtext, bytesread, 500);
                 }
 #else
-                fscanf(&fil, "Var %s = : %u", buff, &var);
+                m_fscanf(&fil, "%s = %u", buff, &var);
                 printf("Read  %s : %d\r\n", buff, var);
 #endif
                 f_close(&fil);
