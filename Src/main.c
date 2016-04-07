@@ -53,7 +53,7 @@ static void SystemClock_Config(void);
 static void Error_Handler(void);
 
 /* Private functions ---------------------------------------------------------*/
-
+//a = 0x3fe0df41
 /**
   * @brief  Main program
   * @param  None
@@ -66,6 +66,7 @@ int main(void)
   uint8_t buff[7];
   unsigned int bytesread = 0;
   unsigned int var = 0;
+  float *a;
 
   HAL_Init();
   
@@ -118,21 +119,8 @@ int main(void)
                 printf("Open OK\r\n");
                 /* Read data from the text file */
                 var = 0;
-#if 0
-                fres = f_read(&fil, rtext, sizeof(rtext), (void *)&bytesread);
-                if((bytesread == 0) || (fres != FR_OK))
-                {
-                    /* file Read or EOF Error */
-                    Error_Handler();
-                } else {
-                    sscanf(rtext, "Var %s = : %u", buff, &var);
-                    printf("Read  %s : %d\r\n", buff, var);
-                    HAL_UART_Transmit(&UartHandle, (uint8_t *) rtext, bytesread, 500);
-                }
-#else
                 m_fscanf(&fil, "%s = %u", buff, &var);
                 printf("Read  %s : %d\r\n", buff, var);
-#endif
                 f_close(&fil);
             } else {
               printf("Unable to open file for reading\r\n");

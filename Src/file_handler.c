@@ -138,15 +138,16 @@ char* get_next_str_fmt( const char* fmt, char* tmp_fmt, uint32_t *valid_arg)
     return fmt;
 }
 
-char locbuffer[20];
+char locbuffer[READ_SIZE];
+char dummy_buf[READ_SIZE];
 
 int m_fscanf(FIL* fp, const char* fmt, ...)
 {
     FRESULT fres = FR_OK;
-    uint8_t tmpSize = READ_SIZE, nb_parsed, counter = 0, tmp_len;
+    uint8_t tmpSize = READ_SIZE, nb_parsed, counter = 0, tmp_len, dummy_len;
     uint32_t valid_arg;
     char next_string_format[8]={0};
-    char *tmp_buffer = locbuffer;
+    char *tmp_buffer = locbuffer, *backup_ptr;
     char *tmp_fmt = fmt;
     void *var;
     va_list ap;
@@ -154,7 +155,7 @@ int m_fscanf(FIL* fp, const char* fmt, ...)
     unsigned int *tmp_uint;
     int  *tmp_int;
     char *tmp_str;
-    float *tmp_flt;
+    float *tmp_flt, dummy_flt;
      
     if (fmt == NULL || fp == NULL) {
         return -1;
@@ -173,6 +174,7 @@ int m_fscanf(FIL* fp, const char* fmt, ...)
             }
             tmp_buffer = locbuffer;
             tmpSize = 0;
+            memcpy(dummy_buf, locbuffer, READ_SIZE);
         }
         tmp_fmt = get_next_str_fmt(tmp_fmt, next_string_format, &valid_arg);
         tmp_len = strlen(next_string_format);
@@ -199,7 +201,11 @@ int m_fscanf(FIL* fp, const char* fmt, ...)
                     break;
                 case FLOAT_VAR:
                     tmp_flt = va_arg(ap, float *);
-                    sscanf( tmp_buffer, next_string_format, tmp_flt, &nb_parsed);
+                    sscanf( dummy_buf + tmpSize, next_string_format, &dummy_flt, &nb_parsed);
+                    next_string_format[tmp_len]='\0';
+                    printf("input : %s -> ", tmp_buffer);
+                    sscanf( tmp_buffer, next_string_format, tmp_flt, &dummy_len);
+                    printf( "flt=%f (%d chars)\r\n", *tmp_flt, nb_parsed);
                     break;
                 default:
                     tmp_str = va_arg(ap, char *);
@@ -214,6 +220,9 @@ int m_fscanf(FIL* fp, const char* fmt, ...)
         }
     }
     va_end(ap);
+    if (tmpSize != READ_SIZE) {
+        m_fseek(fp, tmpSize - READ_SIZE, SEEK_CUR);
+    }
     return counter;
 }
 
