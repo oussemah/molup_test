@@ -1,6 +1,7 @@
 #include "main.h"
 
 #include <stdarg.h>
+#include <stdio.h>
 
 static     FIL *ret;
 
@@ -198,7 +199,7 @@ int m_fscanf(FIL* fp, const char* fmt, ...)
                     break;
                 case FLOAT_VAR:
                     tmp_flt = va_arg(ap, float *);
-                    sscanf( tmp_buffer, next_string_format, tmp_str, &nb_parsed);
+                    sscanf( tmp_buffer, next_string_format, tmp_flt, &nb_parsed);
                     break;
                 default:
                     tmp_str = va_arg(ap, char *);
@@ -227,6 +228,46 @@ int m_fgetc(FIL* fp)
         return EOF;
     }
     return (int) ret;
+}
+
+long m_ftell(FIL* fp)
+{
+    if (fp == NULL)
+    {
+        return -1L;
+    }
+    return (fp->fptr);
+}
+
+int m_fseek(FIL* fp, long offset, int whence)
+{
+    FRESULT fres;
+    long ofs = 0;
+
+    if (fp == NULL) {
+        return EOF; //ToDo : May need to redefine EOF
+    }
+    switch (whence) {
+        case SEEK_SET:
+            ofs = offset;
+            break;
+        case SEEK_CUR:
+            ofs = fp->fptr + offset;
+            break;
+        case SEEK_END:
+            ofs = fp->fsize - offset;
+            break;
+        default:
+            printf("Uknown whence in m_fseek\r\n");
+            return EOF;
+    }
+
+    if (fres = f_lseek(fp, ofs) != FR_OK) {
+        printf("Error seeking to position %l\r\n", ofs);
+        return EOF;
+    }
+
+    return 0;
 }
 
 int m_fclose(FIL* file)
