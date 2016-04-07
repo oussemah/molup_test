@@ -203,7 +203,7 @@ int m_fscanf(FIL* fp, const char* fmt, ...)
                     tmp_flt = va_arg(ap, float *);
                     sscanf( dummy_buf + tmpSize, next_string_format, &dummy_flt, &nb_parsed);
                     next_string_format[tmp_len]='\0';
-                    printf("input : %s -> ", tmp_buffer);
+                    //printf("input : %s -> ", tmp_buffer);
                     sscanf( tmp_buffer, next_string_format, tmp_flt, &dummy_len);
                     printf( "flt=%f (%d chars)\r\n", *tmp_flt, nb_parsed);
                     break;
@@ -272,7 +272,7 @@ int m_fseek(FIL* fp, long offset, int whence)
     }
 
     if (fres = f_lseek(fp, ofs) != FR_OK) {
-        printf("Error seeking to position %l\r\n", ofs);
+        printf("Error seeking to position %u\r\n", ofs);
         return EOF;
     }
 

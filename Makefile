@@ -107,4 +107,4 @@ burn:$(TARGET).bin
 
 debug:$(TARGET).bin
 	$(STLINK)/st-util -p 5000 & echo $! > /tmp/stmgdbserver.pid
-	$(DEBUGGER) $(TARGET).elf -ex "target remote :5000" -ex "b main" -ex "b YJZCcrNdP" -ex "set print pretty on" -ex "layout split" -ex "tui reg general" -ex "continue"
+	$(DEBUGGER) $(TARGET).elf -ex "target remote :5000" -ex "b main" -ex "set print pretty on" -ex "layout split" -ex "tui reg general" -ex "continue"
