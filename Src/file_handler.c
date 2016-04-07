@@ -205,7 +205,7 @@ int m_fscanf(FIL* fp, const char* fmt, ...)
                     next_string_format[tmp_len]='\0';
                     //printf("input : %s -> ", tmp_buffer);
                     sscanf( tmp_buffer, next_string_format, tmp_flt, &dummy_len);
-                    printf( "flt=%f (%d chars)\r\n", *tmp_flt, nb_parsed);
+                    //printf( "flt=%f (%d chars)\r\n", *tmp_flt, nb_parsed);
                     break;
                 default:
                     tmp_str = va_arg(ap, char *);

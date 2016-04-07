@@ -1200,7 +1200,7 @@ void molup_test()
 			  }
    }
    
-   fclose( pInDataFile );
+   m_fclose( pInDataFile );
    free( pPredictionData );
    pPredictionData = NULL;
    
@@ -1209,7 +1209,7 @@ void molup_test()
    printf("\nPrediction is done. The results are stored in file %s\n", "output.txt");
    
    free( hOptions );  
-   fclose( pResultFile );
+   m_fclose( pResultFile );
    
    return MOLP_OK;
 }

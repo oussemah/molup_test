@@ -44,7 +44,7 @@ CUSTOM_INCLUDES += -Iexternal_libs/molup
 #define CFLAGS
 DBG = -Os -fdata-sections -ffunction-sections -Wl,--gc-sections
 ifneq (,$(DEBUG))
-DBG = -g
+DBG = -g -Os -fdata-sections -ffunction-sections -Wl,--gc-sections
 endif
 
 CFLAGS = -c $(DBG) -Wall -DUSE_STD_PERIPH_DRIVER
